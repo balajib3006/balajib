@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Portfolio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="assets/three.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>My Portfolio</h1>
+    <nav>
+      <a href="#about">About Me</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- About Section -->
+    <section id="about">
+      <h2>About Me</h2>
+      <p>Welcome to my portfolio! Here you can view my designs, 3D models, and more.</p>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+      <h2>Projects</h2>
+
+      <!-- Altium 365 Viewer -->
+      <h3>PCB Design</h3>
+      <iframe 
+        src="https://altium365.com/embed/YOUR_EMBED_CODE"
+        width="800" height="600" style="border:none;">
+      </iframe>
+
+      <!-- STEP/STP File Download -->
+      <h3>3D Models</h3>
+      <a href="files/design.step" download>Download STEP File</a>
+
+      <!-- 3D Viewer (Three.js) -->
+      <div id="3d-viewer"></div>
+
+      <!-- Image Gallery -->
+      <h3>Image Gallery</h3>
+      <div class="gallery">
+        <img src="images/example.jpg" alt="Design Image">
+        <img src="images/example.jpg" alt="Another Image">
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+      <h2>Contact Me</h2>
+      <p>Email: <a href="mailto:yourname@example.com">yourname@example.com</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 My Portfolio</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
