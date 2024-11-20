@@ -1,29 +1,66 @@
-// Initialize 3D Viewer with Three.js
-const init3DViewer = () => {
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 600, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer();
+// Initialize Three.js Viewer
+const container = document.getElementById('3d-viewer');
+const width = container.offsetWidth;
+const height = container.offsetHeight;
 
-  renderer.setSize(800, 600);
-  document.getElementById('3d-viewer').appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(width, height);
+container.appendChild(renderer.domElement);
 
-  // Sample geometry
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
+// Lighting
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(1, 1, 1).normalize();
+scene.add(light);
 
-  scene.add(cube);
-  camera.position.z = 5;
+let currentModel;
+const loader = new THREE.GLTFLoader();
 
-  const animate = function () {
-    requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    renderer.render(scene, camera);
-  };
+const loadModel = (modelPath) => {
+  // Remove the current model
+  if (currentModel) {
+    scene.remove(currentModel);
+  }
 
-  animate();
+  // Load the new model
+  loader.load(
+    modelPath,
+    (gltf) => {
+      currentModel = gltf.scene;
+      scene.add(currentModel);
+    },
+    undefined,
+    (error) => {
+      console.error('Error loading the model:', error);
+    }
+  );
 };
 
-// Initialize viewer when the page loads
-document.addEventListener('DOMContentLoaded', init3DViewer);
+// Default camera position
+camera.position.z = 5;
+
+// Animation loop
+const animate = () => {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+};
+animate();
+
+// Load the first model by default
+const firstModel = document.querySelector('.slider img.active').dataset.model;
+loadModel(firstModel);
+
+// Slider functionality
+const sliderImages = document.querySelectorAll('.slider img');
+sliderImages.forEach((img) => {
+  img.addEventListener('click', (e) => {
+    // Update active class
+    sliderImages.forEach((img) => img.classList.remove('active'));
+    e.target.classList.add('active');
+
+    // Load the selected model
+    const modelPath = e.target.dataset.model;
+    loadModel(modelPath);
+  });
+});
