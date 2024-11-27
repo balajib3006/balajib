@@ -1,66 +1,42 @@
-// Initialize Three.js Viewer
-const container = document.getElementById('3d-viewer');
-const width = container.offsetWidth;
-const height = container.offsetHeight;
+// Altium Viewer Slider
+const altiumFrames = document.querySelectorAll('.altium-slider iframe');
+let altiumIndex = 0;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(width, height);
-container.appendChild(renderer.domElement);
+document.getElementById('altium-prev').addEventListener('click', () => {
+  altiumFrames[altiumIndex].classList.remove('active');
+  altiumIndex = (altiumIndex - 1 + altiumFrames.length) % altiumFrames.length;
+  altiumFrames[altiumIndex].classList.add('active');
+});
 
-// Lighting
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(1, 1, 1).normalize();
-scene.add(light);
+document.getElementById('altium-next').addEventListener('click', () => {
+  altiumFrames[altiumIndex].classList.remove('active');
+  altiumIndex = (altiumIndex + 1) % altiumFrames.length;
+  altiumFrames[altiumIndex].classList.add('active');
+});
 
-let currentModel;
-const loader = new THREE.GLTFLoader();
+// STEP File Viewer
+const viewer = document.getElementById('3d-viewer');
+const models = ['models/model1.step', 'models/model2.step'];
+let modelIndex = 0;
 
-const loadModel = (modelPath) => {
-  // Remove the current model
-  if (currentModel) {
-    scene.remove(currentModel);
+const loadStepFile = (path) => {
+  // Clear existing viewer content
+  while (viewer.firstChild) {
+    viewer.removeChild(viewer.firstChild);
   }
 
-  // Load the new model
-  loader.load(
-    modelPath,
-    (gltf) => {
-      currentModel = gltf.scene;
-      scene.add(currentModel);
-    },
-    undefined,
-    (error) => {
-      console.error('Error loading the model:', error);
-    }
-  );
+  const occViewer = new OCCViewer(viewer, { background: '#ffffff' });
+  occViewer.loadModel(path).catch((error) => console.error('Error loading STEP file:', error));
 };
 
-// Default camera position
-camera.position.z = 5;
+loadStepFile(models[modelIndex]);
 
-// Animation loop
-const animate = () => {
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
-};
-animate();
+document.getElementById('prev-model').addEventListener('click', () => {
+  modelIndex = (modelIndex - 1 + models.length) % models.length;
+  loadStepFile(models[modelIndex]);
+});
 
-// Load the first model by default
-const firstModel = document.querySelector('.slider img.active').dataset.model;
-loadModel(firstModel);
-
-// Slider functionality
-const sliderImages = document.querySelectorAll('.slider img');
-sliderImages.forEach((img) => {
-  img.addEventListener('click', (e) => {
-    // Update active class
-    sliderImages.forEach((img) => img.classList.remove('active'));
-    e.target.classList.add('active');
-
-    // Load the selected model
-    const modelPath = e.target.dataset.model;
-    loadModel(modelPath);
-  });
+document.getElementById('next-model').addEventListener('click', () => {
+  modelIndex = (modelIndex + 1) % models.length;
+  loadStepFile(models[modelIndex]);
 });
